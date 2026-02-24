@@ -3,29 +3,29 @@ import "../styles/globals.css";
 import SessionProvider from "./components/SessionProvider";
 
 export const metadata: Metadata = {
-  title: "ytextract — Download & Transcribe YouTube Videos",
+  title: "ytextract — Download YouTube Videos & Audio",
   description:
-    "Download videos, rip audio, generate word-perfect AI transcripts — all in one seamless workflow. Free, fast, and private.",
+    "Download YouTube videos as MP4 and extract audio as MP3 — free, fast, and private. No sign-up required.",
   keywords: [
     "youtube downloader",
     "youtube to mp3",
-    "youtube transcription",
-    "ai transcript",
+    "youtube to mp4",
     "video download",
     "audio extractor",
+    "free youtube downloader",
   ],
   openGraph: {
-    title: "ytextract — Download & Transcribe YouTube Videos",
+    title: "ytextract — Download YouTube Videos & Audio",
     description:
-      "Download videos, rip audio, generate transcripts — all in one seamless workflow.",
+      "Download YouTube videos as MP4 and extract audio as MP3 — free, fast, and private.",
     type: "website",
     siteName: "ytextract",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ytextract — Download & Transcribe YouTube Videos",
+    title: "ytextract — Download YouTube Videos & Audio",
     description:
-      "Download videos, rip audio, generate transcripts — all in one seamless workflow.",
+      "Download YouTube videos as MP4 and extract audio as MP3 — free, fast, and private.",
   },
   robots: {
     index: true,

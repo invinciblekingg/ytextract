@@ -6,7 +6,7 @@ const features = [
   {
     icon: "▶",
     title: "MP4 Video Download",
-    desc: "Download any public YouTube video in the highest available quality — up to 4K resolution with full audio.",
+    desc: "Download any public YouTube video in high quality — up to 720p with full audio.",
     color: "var(--cyan)",
     bg: "rgba(0,229,255,0.07)",
     border: "rgba(0,229,255,0.15)",
@@ -20,36 +20,20 @@ const features = [
     border: "rgba(0,255,157,0.15)",
   },
   {
-    icon: "✦",
-    title: "AI-Powered Transcripts",
-    desc: "OpenAI Whisper delivers near-human accuracy across 100+ languages. Get full verbatim transcripts instantly.",
-    color: "var(--violet)",
-    bg: "rgba(168,85,247,0.07)",
-    border: "rgba(168,85,247,0.15)",
-  },
-  {
     icon: "⚡",
     title: "Blazing Fast",
-    desc: "Parallel download + transcription pipeline. Most videos processed in under 30 seconds.",
+    desc: "Optimized download pipeline. Most videos processed in under 30 seconds.",
     color: "var(--amber)",
     bg: "rgba(251,191,36,0.07)",
     border: "rgba(251,191,36,0.15)",
   },
   {
-    icon: "🔌",
-    title: "REST API Access",
-    desc: "Fully documented JSON API. Integrate YouTube downloading and transcription into any app.",
-    color: "var(--rose)",
-    bg: "rgba(255,77,109,0.07)",
-    border: "rgba(255,77,109,0.15)",
-  },
-  {
     icon: "🛡",
     title: "Privacy First",
-    desc: "Files processed server-side and cleaned up after delivery. No storage, no tracking, no account needed.",
-    color: "var(--cyan)",
-    bg: "rgba(0,229,255,0.07)",
-    border: "rgba(0,229,255,0.12)",
+    desc: "No storage, no tracking. Your downloads stay yours. Sign in only to prevent abuse.",
+    color: "var(--violet)",
+    bg: "rgba(168,85,247,0.07)",
+    border: "rgba(168,85,247,0.15)",
   },
 ];
 
@@ -85,7 +69,6 @@ export default function FeaturesSection() {
   return (
     <section ref={sectionRef} id="features" className="relative py-28 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Heading */}
         <div ref={headingRef} className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full font-mono text-xs mb-4"
             style={{ background: "rgba(0,229,255,0.06)", border: "1px solid rgba(0,229,255,0.15)", color: "var(--cyan)" }}>
@@ -95,12 +78,11 @@ export default function FeaturesSection() {
             One tool, every format.
           </h2>
           <p className="text-lg max-w-lg mx-auto" style={{ color: "var(--dim)" }}>
-            Download, convert, and transcribe — without juggling five different websites.
+            Download video and audio from YouTube — without juggling five different websites.
           </p>
         </div>
 
-        {/* Grid */}
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {features.map((f) => (
             <div
               key={f.title}

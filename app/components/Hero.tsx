@@ -17,7 +17,6 @@ export default function Hero() {
     const init = async () => {
       const { gsap } = await import("gsap");
       ctx = gsap.context(() => {
-        // Orbs floating
         gsap.to(orb1Ref.current, { y: -30, x: 20, duration: 9, ease: "sine.inOut", yoyo: true, repeat: -1 });
         gsap.to(orb2Ref.current, { y: 25, x: -15, duration: 11, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 2 });
         gsap.to(orb3Ref.current, { y: -20, x: 10, duration: 7, ease: "sine.inOut", yoyo: true, repeat: -1, delay: 4 });
@@ -47,7 +46,6 @@ export default function Hero() {
         <div ref={orb3Ref} className="absolute rounded-full blur-[90px]"
           style={{ width: 400, height: 400, background: "radial-gradient(circle, rgba(0,255,157,0.07) 0%, transparent 70%)", bottom: "5%", left: "-5%" }} />
 
-        {/* Spinning rings */}
         <div ref={ringRef} className="absolute"
           style={{ width: 800, height: 800, top: "50%", left: "50%", marginTop: -400, marginLeft: -400 }}>
           <div className="absolute inset-0 rounded-full" style={{ border: "1px solid rgba(0,229,255,0.05)" }} />
@@ -56,10 +54,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Dot grid */}
       <div className="absolute inset-0 dot-grid opacity-50 pointer-events-none" />
 
-      {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto w-full">
         <div ref={badgeRef}>
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full font-mono text-xs mb-8"
@@ -70,33 +66,31 @@ export default function Hero() {
               <span className="relative inline-flex rounded-full h-2 w-2"
                 style={{ backgroundColor: "var(--emerald)" }} />
             </span>
-            Cobalt API · Next.js 14 — Free & Open Source
+            Next.js 14 · Cobalt API — Free & Open Source
           </div>
         </div>
 
         <h1 ref={h1Ref} className="font-display font-black leading-[1.02] tracking-tight mb-6">
           <span className="block text-5xl md:text-7xl lg:text-[88px] text-gradient-main">
-            Extract. Download.
+            Paste. Extract.
           </span>
           <span className="block text-5xl md:text-7xl lg:text-[88px] mt-1"
             style={{ color: "var(--text)", opacity: 0.65 }}>
-            Transcribe.
+            Done.
           </span>
         </h1>
 
         <p ref={subRef} className="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12"
           style={{ color: "var(--dim)" }}>
-          The most powerful YouTube extraction toolkit. Download MP4 & MP3, and generate
-          <span style={{ color: "var(--text)" }}> word-perfect AI transcripts</span> powered by OpenAI Whisper — in under 30 seconds.
+          The fastest YouTube extraction tool. Download
+          <span style={{ color: "var(--text)" }}> MP4 video & MP3 audio</span> from any public YouTube link — in seconds.
         </p>
 
-        {/* Stats */}
         <div ref={statsRef} className="flex flex-wrap items-center justify-center gap-6 md:gap-12">
           {[
-            { num: "4K", label: "HD Quality", color: "var(--cyan)" },
-            { num: "99%", label: "Accuracy", color: "var(--emerald)" },
-            { num: "30s", label: "Avg Speed", color: "var(--violet)" },
-            { num: "100+", label: "Languages", color: "var(--amber)" },
+            { num: "720p", label: "HD Quality", color: "var(--cyan)" },
+            { num: "< 30s", label: "Avg Speed", color: "var(--emerald)" },
+            { num: "Free", label: "No Cost", color: "var(--violet)" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <div className="font-display font-black text-3xl" style={{ color: s.color }}>{s.num}</div>
@@ -106,7 +100,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
         <span className="font-mono text-xs" style={{ color: "var(--dim)" }}>scroll</span>
         <div className="w-px h-10" style={{ background: "linear-gradient(to bottom, var(--cyan), transparent)" }} />

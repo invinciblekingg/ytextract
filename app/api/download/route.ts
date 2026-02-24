@@ -8,7 +8,6 @@ import { rateLimit, rateLimitResponse } from "@/app/lib/rateLimit";
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  // Require auth
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Please sign in to download videos." }, { status: 401 });
@@ -16,8 +15,8 @@ export async function POST(req: NextRequest) {
 
   const userId = session.user.id;
 
-  // Rate limit
-  const { success, resetAt } = rateLimit(`download:${userId}`, 5, 60 * 60 * 1000);
+  // Rate limit: 10 requests per hour
+  const { success, resetAt } = rateLimit(`download:${userId}`, 10, 60 * 60 * 1000);
   if (!success) return rateLimitResponse(resetAt);
 
   // Usage limit
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest) {
     const { url } = body;
 
     if (!url || typeof url !== "string") {
-      return NextResponse.json({ error: "URL is required" }, { status: 400 });
+      return NextResponse.json({ error: "URL is required." }, { status: 400 });
     }
 
     if (!isValidYouTubeUrl(url)) {
@@ -45,13 +44,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1. Get video info
     const info = await getVideoInfo(url);
     validateVideoForDownload(info);
 
-    // Get download links from Cobalt
+    // 2. Get download links from Cobalt (synchronous — no job queue)
     const links = await getDownloadLinks(url);
 
-    // Create job record
+    // 3. Save record
     const job = await prisma.job.create({
       data: {
         userId,
@@ -66,9 +66,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Track usage
+    // 4. Track usage
     await incrementUsage(userId, job.id);
 
+    // 5. Return everything the frontend needs
     return NextResponse.json({
       videoUrl: links.videoUrl,
       audioUrl: links.audioUrl,
@@ -84,12 +85,6 @@ export async function POST(req: NextRequest) {
     if (message.includes("private") || message.includes("Private")) {
       return NextResponse.json(
         { error: "This video is private and cannot be downloaded." },
-        { status: 403 }
-      );
-    }
-    if (message.includes("age") || message.includes("Age")) {
-      return NextResponse.json(
-        { error: "This video is age-restricted and cannot be processed." },
         { status: 403 }
       );
     }

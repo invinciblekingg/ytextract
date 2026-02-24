@@ -12,15 +12,15 @@ const steps = [
   },
   {
     num: "02",
-    title: "Process",
-    desc: "Our server validates, downloads, and pipes audio to OpenAI Whisper simultaneously.",
+    title: "Extract",
+    desc: "We fetch the video info and generate download links instantly.",
     color: "var(--emerald)",
     icon: "⚙",
   },
   {
     num: "03",
     title: "Download",
-    desc: "Get your MP4, MP3, or transcript — ready to save in seconds.",
+    desc: "Get your MP4 video or MP3 audio — ready to save in seconds.",
     color: "var(--violet)",
     icon: "⬇",
   },
@@ -66,17 +66,16 @@ export default function HowItWorks() {
           </div>
           <h2 className="font-display font-black text-4xl md:text-5xl tracking-tight mb-4">
             <span className="text-gradient-violet">3 steps.</span>{" "}
-            <span style={{ color: "var(--text)", opacity: 0.7 }}>That's it.</span>
+            <span style={{ color: "var(--text)", opacity: 0.7 }}>That&apos;s it.</span>
           </h2>
           <p className="text-lg max-w-md mx-auto" style={{ color: "var(--dim)" }}>
-            No sign-up, no extensions, no nonsense. Just paste, wait, download.
+            Sign in, paste a link, and download. Simple as that.
           </p>
         </div>
 
         <div ref={stepsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {steps.map((step, i) => (
             <div key={step.num} className="relative">
-              {/* Connector line */}
               {i < steps.length - 1 && (
                 <div className="hidden md:block absolute top-8 left-[calc(50%+40px)] right-0 h-px"
                   style={{ background: `linear-gradient(90deg, ${step.color}40, transparent)` }} />
@@ -84,10 +83,8 @@ export default function HowItWorks() {
 
               <div className="rounded-2xl p-8 text-center feature-card"
                 style={{ background: "var(--panel)", border: "1px solid var(--border)" }}>
-                {/* Number */}
                 <div className="font-mono text-xs mb-4" style={{ color: "var(--muted)" }}>{step.num}</div>
 
-                {/* Icon circle */}
                 <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl text-2xl mb-5"
                   style={{ background: `rgba(0,0,0,0.4)`, border: `1px solid ${step.color}30`, color: step.color }}>
                   {step.icon}

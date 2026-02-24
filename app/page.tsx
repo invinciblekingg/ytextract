@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import FeatureTicker from "./components/FeatureTicker";
 import FeaturesSection from "./components/FeaturesSection";
 import HowItWorks from "./components/HowItWorks";
-import ApiSection from "./components/ApiSection";
 import DemoSection from "./components/DemoSection";
 import UrlForm from "./components/UrlForm";
 import DownloadButtons from "./components/DownloadButtons";
@@ -22,18 +21,6 @@ interface VideoData {
   thumbnail: string;
   duration: string;
   author: string;
-}
-
-interface JobResponse {
-  jobId: string;
-  status: string;
-  title?: string;
-  thumbnail?: string;
-  duration?: string;
-  author?: string;
-  videoPath?: string;
-  audioPath?: string;
-  errorMsg?: string;
 }
 
 type Stage = "idle" | "downloading" | "done";
@@ -57,35 +44,6 @@ export default function Home() {
     }
   }, [session]);
 
-  const pollJobStatus = useCallback(async (jobId: string): Promise<JobResponse> => {
-    return new Promise((resolve, reject) => {
-      const interval = setInterval(async () => {
-        try {
-          const res = await fetch(`/api/jobs/${jobId}`);
-          const data: JobResponse = await res.json();
-
-          if (data.status === "DONE") {
-            clearInterval(interval);
-            resolve(data);
-          } else if (data.status === "FAILED") {
-            clearInterval(interval);
-            reject(new Error(data.errorMsg || "Download failed"));
-          }
-          // PENDING or PROCESSING — keep polling
-        } catch (err) {
-          clearInterval(interval);
-          reject(err);
-        }
-      }, 2000);
-
-      // Timeout after 90 seconds
-      setTimeout(() => {
-        clearInterval(interval);
-        reject(new Error("Download timed out. Please try again."));
-      }, 90000);
-    });
-  }, []);
-
   const handleSubmit = async (url: string) => {
     if (!session?.user) {
       setError("Please sign in with Google to download videos.");
@@ -102,38 +60,33 @@ export default function Home() {
     setStage("downloading");
 
     try {
-      // Create job
-      const jobRes = await fetch("/api/jobs", {
+      // Single synchronous API call — no polling needed
+      const res = await fetch("/api/download", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
-      const jobData = await jobRes.json();
+      const data = await res.json();
 
-      if (!jobRes.ok) {
-        throw new Error(jobData.error || "Failed to start download");
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to process video.");
       }
 
-      // Poll for completion
-      const result = await pollJobStatus(jobData.jobId);
-
       setVideoData({
-        videoUrl: result.videoPath || "",
-        audioUrl: result.audioPath || "",
-        title: result.title || jobData.title || "",
-        thumbnail: result.thumbnail || jobData.thumbnail || "",
-        duration: result.duration || jobData.duration || "",
-        author: result.author || jobData.author || "",
+        videoUrl: data.videoUrl,
+        audioUrl: data.audioUrl,
+        title: data.title,
+        thumbnail: data.thumbnail,
+        duration: data.duration,
+        author: data.author,
       });
 
       setStage("done");
 
-      // Refresh usage count
+      // Refresh usage
       fetch("/api/usage")
         .then((r) => r.json())
-        .then((data) => {
-          if (data.used !== undefined) setUsage(data);
-        })
+        .then((d) => { if (d.used !== undefined) setUsage(d); })
         .catch(() => { });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
@@ -146,31 +99,17 @@ export default function Home() {
 
   return (
     <>
-      {/* Noise overlay */}
       <div className="noise" />
-
-      {/* Dot grid background */}
       <div className="fixed inset-0 dot-grid opacity-40 pointer-events-none" style={{ zIndex: 0 }} />
 
       <Navbar />
 
       <main className="relative" style={{ zIndex: 1 }}>
-        {/* Hero */}
         <Hero />
-
-        {/* Ticker band */}
         <FeatureTicker />
-
-        {/* Features */}
         <FeaturesSection />
-
-        {/* How it Works */}
         <HowItWorks />
 
-        {/* API Docs */}
-        <ApiSection />
-
-        {/* Demo / CTA */}
         <DemoSection>
           {!isAuthenticated && authStatus !== "loading" && (
             <div
@@ -230,9 +169,7 @@ export default function Home() {
 
           {error && <ErrorMessage message={error} onDismiss={() => setError("")} />}
 
-          {loading && (
-            <LoadingOverlay stage="downloading" />
-          )}
+          {loading && <LoadingOverlay stage="downloading" />}
 
           {videoData && stage === "done" && (
             <DownloadButtons data={videoData} />

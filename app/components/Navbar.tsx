@@ -18,7 +18,6 @@ export default function Navbar() {
       const mod = await import("gsap");
       gsap = mod.gsap;
 
-      // Entrance animation
       const tl = gsap.timeline({ delay: 0.1 });
       tl.from(logoRef.current, { y: -20, opacity: 0, duration: 0.6, ease: "power3.out" })
         .from(linksRef.current?.children ?? [], {
@@ -37,7 +36,6 @@ export default function Navbar() {
   const navLinks = [
     { label: "Features", href: "#features" },
     { label: "How it Works", href: "#how-it-works" },
-    { label: "API Docs", href: "#api" },
     { label: "Try It", href: "#demo" },
   ];
 
@@ -57,10 +55,7 @@ export default function Navbar() {
                 style={{ background: "linear-gradient(135deg, var(--cyan) 0%, #0088aa 100%)" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M8 5v14l11-7z"
-                    fill="var(--void)"
-                  />
+                  <path d="M8 5v14l11-7z" fill="var(--void)" />
                 </svg>
                 <div
                   className="absolute inset-0 rounded-xl"
@@ -90,13 +85,6 @@ export default function Navbar() {
 
             {/* CTA */}
             <div ref={ctaRef} className="hidden md:flex items-center gap-3">
-              <div
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono"
-                style={{ background: "rgba(0,229,255,0.07)", border: "1px solid rgba(0,229,255,0.15)", color: "var(--cyan)" }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
-                <span>API v1 · Live</span>
-              </div>
               <a
                 href="#demo"
                 className="btn-primary px-5 py-2 text-sm"

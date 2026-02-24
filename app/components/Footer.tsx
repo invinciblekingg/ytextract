@@ -23,16 +23,15 @@ export default function Footer() {
   }, []);
 
   const links = [
-    { group: "Product", items: ["Features", "How it Works", "API Docs", "Try Demo"] },
+    { group: "Product", items: ["Features", "How it Works", "Try Demo"] },
     { group: "Stack", items: ["Next.js 14", "Cobalt API", "Prisma", "Tailwind CSS"] },
-    { group: "Legal", items: ["Privacy Policy", "Terms of Use", "DMCA", "Cookie Policy"] },
+    { group: "Legal", items: ["Privacy Policy", "Terms of Use", "DMCA"] },
   ];
 
   return (
     <footer ref={footerRef} className="relative border-t mt-16" style={{ borderColor: "var(--border)" }}>
       <div className="max-w-6xl mx-auto px-5 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -46,7 +45,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: "var(--dim)" }}>
-              The modern YouTube extraction toolkit. Built with Next.js and powered by OpenAI.
+              The modern YouTube extraction tool. Download MP4 & MP3 instantly.
             </p>
             <div className="flex items-center gap-2 mt-4 font-mono text-xs"
               style={{ color: "var(--muted)" }}>
@@ -55,7 +54,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Link groups */}
           {links.map((g) => (
             <div key={g.group}>
               <div className="font-display font-bold text-xs uppercase tracking-widest mb-4"
@@ -76,7 +74,6 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar */}
         <div className="section-line mb-6" />
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="font-mono text-xs" style={{ color: "var(--muted)" }}>
@@ -85,10 +82,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <span className="font-mono text-xs px-2 py-1 rounded"
               style={{ background: "var(--panel)", border: "1px solid var(--border)", color: "var(--dim)" }}>
-              v1.0.0
-            </span>
-            <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>
-              Powered by OpenAI Whisper
+              v2.0.0
             </span>
           </div>
         </div>
