@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cleanupOldFiles } from "@/app/lib/youtube";
 
 export async function GET(req: NextRequest) {
     // Protect with a secret so only Vercel Cron can call this
@@ -8,9 +7,9 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const cleaned = cleanupOldFiles(60 * 60 * 1000); // 1 hour old files
+    // No local files to clean up — downloads are served via Cobalt API URLs
     return NextResponse.json({
-        message: `Cleaned ${cleaned} expired file(s)`,
+        message: "No cleanup needed — downloads are served via external URLs",
         timestamp: new Date().toISOString(),
     });
 }

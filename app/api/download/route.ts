@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/app/lib/auth";
-import { isValidYouTubeUrl, getVideoInfo, downloadAudio, downloadVideo, validateVideoForDownload } from "@/app/lib/youtube";
+import { isValidYouTubeUrl, getVideoInfo, validateVideoForDownload, getDownloadLinks } from "@/app/lib/youtube";
 import { checkUsageLimit, getUserUsage, incrementUsage } from "@/app/lib/usage";
 import { prisma } from "@/app/lib/prisma";
 import { rateLimit, rateLimitResponse } from "@/app/lib/rateLimit";
-import { randomUUID } from "crypto";
 
 export const maxDuration = 60;
 
@@ -49,12 +48,8 @@ export async function POST(req: NextRequest) {
     const info = await getVideoInfo(url);
     validateVideoForDownload(info);
 
-    const id = randomUUID();
-
-    const [audioPath, videoPath] = await Promise.all([
-      downloadAudio(url, `audio-${id}`),
-      downloadVideo(url, `video-${id}`),
-    ]);
+    // Get download links from Cobalt
+    const links = await getDownloadLinks(url);
 
     // Create job record
     const job = await prisma.job.create({
@@ -66,8 +61,8 @@ export async function POST(req: NextRequest) {
         thumbnail: info.thumbnail,
         duration: info.duration,
         author: info.author,
-        videoPath,
-        audioPath,
+        videoPath: links.videoUrl,
+        audioPath: links.audioUrl,
       },
     });
 
@@ -75,13 +70,12 @@ export async function POST(req: NextRequest) {
     await incrementUsage(userId, job.id);
 
     return NextResponse.json({
-      videoPath,
-      audioPath,
+      videoUrl: links.videoUrl,
+      audioUrl: links.audioUrl,
       title: info.title,
       thumbnail: info.thumbnail,
       duration: info.duration,
       author: info.author,
-      id,
     });
   } catch (err: unknown) {
     console.error("[download] error:", err);

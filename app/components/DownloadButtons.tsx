@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 interface VideoData {
-  videoPath: string;
-  audioPath: string;
+  videoUrl: string;
+  audioUrl: string;
   title: string;
   thumbnail: string;
   duration: string;
@@ -13,11 +13,9 @@ interface VideoData {
 
 interface Props {
   data: VideoData;
-  transcript: string;
-  transcribing: boolean;
 }
 
-export default function DownloadButtons({ data, transcript, transcribing }: Props) {
+export default function DownloadButtons({ data }: Props) {
   const [downloading, setDownloading] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -38,20 +36,19 @@ export default function DownloadButtons({ data, transcript, transcribing }: Prop
     return () => ctx?.revert();
   }, []);
 
-  const handleDownload = async (type: "video" | "audio" | "transcript") => {
+  const handleDownload = async (type: "video" | "audio") => {
     setDownloading(type);
     try {
-      if (type === "transcript") {
-        const blob = new Blob([transcript], { type: "text/plain" });
-        const href = URL.createObjectURL(blob);
-        Object.assign(document.createElement("a"), { href, download: `${safeName}-transcript.txt` }).click();
-        URL.revokeObjectURL(href);
-      } else {
-        const filePath = type === "video" ? data.videoPath : data.audioPath;
-        const ext = type === "video" ? "mp4" : "mp3";
-        const href = `/api/file?path=${encodeURIComponent(filePath)}&filename=${encodeURIComponent(safeName)}`;
-        Object.assign(document.createElement("a"), { href, download: `${safeName}.${ext}` }).click();
-      }
+      const url = type === "video" ? data.videoUrl : data.audioUrl;
+      // Open the Cobalt download URL in a new tab
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${safeName}.${type === "video" ? "mp4" : "mp3"}`;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } finally {
       setTimeout(() => setDownloading(null), 1200);
     }
@@ -66,7 +63,6 @@ export default function DownloadButtons({ data, transcript, transcribing }: Prop
   const buttons = [
     { type: "video" as const, label: "Download MP4", sub: "Full Video · " + data.duration, icon: "▶", color: "var(--cyan)", border: "rgba(0,229,255,0.2)", glow: "rgba(0,229,255,0.12)" },
     { type: "audio" as const, label: "Download MP3", sub: "Audio Only", icon: "♪", color: "var(--emerald)", border: "rgba(0,255,157,0.2)", glow: "rgba(0,255,157,0.1)" },
-    { type: "transcript" as const, label: "Download .TXT", sub: transcribing ? "Generating..." : transcript ? `${transcript.split(" ").length} words` : "No transcript", icon: "✦", color: "var(--violet)", border: "rgba(168,85,247,0.2)", glow: "rgba(168,85,247,0.1)", disabled: transcribing || !transcript },
   ];
 
   return (
@@ -94,29 +90,26 @@ export default function DownloadButtons({ data, transcript, transcribing }: Prop
       </div>
 
       {/* Download buttons grid */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         {buttons.map((btn) => (
           <button
             key={btn.type}
-            onClick={() => !btn.disabled && handleDownload(btn.type)}
-            disabled={btn.disabled || downloading === btn.type}
+            onClick={() => handleDownload(btn.type)}
+            disabled={downloading === btn.type}
             className="group relative rounded-xl p-4 text-left overflow-hidden transition-all duration-300"
             style={{
-              background: btn.disabled ? "rgba(0,0,0,0.2)" : "var(--panel)",
-              border: `1px solid ${btn.disabled ? "var(--border)" : btn.border}`,
-              boxShadow: btn.disabled ? "none" : `0 0 30px ${btn.glow}`,
-              cursor: btn.disabled ? "not-allowed" : "pointer",
-              opacity: btn.disabled ? 0.4 : 1,
+              background: "var(--panel)",
+              border: `1px solid ${btn.border}`,
+              boxShadow: `0 0 30px ${btn.glow}`,
+              cursor: "pointer",
             }}>
             {/* Hover bg */}
-            {!btn.disabled && (
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: `radial-gradient(ellipse at 50% 0%, ${btn.glow} 0%, transparent 80%)` }} />
-            )}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{ background: `radial-gradient(ellipse at 50% 0%, ${btn.glow} 0%, transparent 80%)` }} />
 
             <div className="relative z-10">
               <div className="text-xl mb-2 transition-transform duration-200 group-hover:scale-110"
-                style={{ color: btn.disabled ? "var(--muted)" : btn.color }}>
+                style={{ color: btn.color }}>
                 {downloading === btn.type ? (
                   <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -124,7 +117,7 @@ export default function DownloadButtons({ data, transcript, transcribing }: Prop
                   </svg>
                 ) : btn.icon}
               </div>
-              <div className="font-display font-bold text-xs" style={{ color: btn.disabled ? "var(--muted)" : "var(--text-bright)" }}>
+              <div className="font-display font-bold text-xs" style={{ color: "var(--text-bright)" }}>
                 {btn.label}
               </div>
               <div className="font-mono text-xs mt-0.5" style={{ color: "var(--dim)" }}>

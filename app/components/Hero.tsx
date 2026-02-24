@@ -70,7 +70,7 @@ export default function Hero() {
               <span className="relative inline-flex rounded-full h-2 w-2"
                 style={{ backgroundColor: "var(--emerald)" }} />
             </span>
-            OpenAI Whisper · ytdl-core · Next.js 14 — Free & Open Source
+            Cobalt API · Next.js 14 — Free & Open Source
           </div>
         </div>
 

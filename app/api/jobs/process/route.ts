@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
-import { downloadAudio, downloadVideo } from "@/app/lib/youtube";
-import { transcribeAudio } from "@/app/lib/openai";
+import { getDownloadLinks } from "@/app/lib/youtube";
 import { incrementUsage } from "@/app/lib/usage";
-import { randomUUID } from "crypto";
 
 export const maxDuration = 60;
 
@@ -33,33 +31,17 @@ export async function POST(req: NextRequest) {
             data: { status: "PROCESSING" },
         });
 
-        const id = randomUUID();
-
         try {
-            // Download video and audio in parallel
-            const [audioPath, videoPath] = await Promise.all([
-                downloadAudio(job.url, `audio-${id}`),
-                downloadVideo(job.url, `video-${id}`),
-            ]);
+            // Get download links from Cobalt API
+            const links = await getDownloadLinks(job.url);
 
-            // Try transcription (optional — only if OpenAI key is configured)
-            let transcript: string | null = null;
-            try {
-                if (process.env.OPENAI_API_KEY) {
-                    transcript = await transcribeAudio(audioPath);
-                }
-            } catch (trErr) {
-                console.error("[process] transcription error (non-fatal):", trErr);
-            }
-
-            // Mark as done
+            // Mark as done — store Cobalt download URLs
             await prisma.job.update({
                 where: { id: jobId },
                 data: {
                     status: "DONE",
-                    videoPath,
-                    audioPath,
-                    transcript,
+                    videoPath: links.videoUrl,
+                    audioPath: links.audioUrl,
                 },
             });
 

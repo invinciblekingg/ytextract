@@ -24,7 +24,7 @@ export default function Footer() {
 
   const links = [
     { group: "Product", items: ["Features", "How it Works", "API Docs", "Try Demo"] },
-    { group: "Stack", items: ["Next.js 14", "OpenAI Whisper", "ytdl-core", "Tailwind CSS"] },
+    { group: "Stack", items: ["Next.js 14", "Cobalt API", "Prisma", "Tailwind CSS"] },
     { group: "Legal", items: ["Privacy Policy", "Terms of Use", "DMCA", "Cookie Policy"] },
   ];
 

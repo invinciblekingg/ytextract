@@ -11,14 +11,13 @@ import ApiSection from "./components/ApiSection";
 import DemoSection from "./components/DemoSection";
 import UrlForm from "./components/UrlForm";
 import DownloadButtons from "./components/DownloadButtons";
-import TranscriptCard from "./components/TranscriptCard";
 import LoadingOverlay from "./components/LoadingOverlay";
 import ErrorMessage from "./components/ErrorMessage";
 import Footer from "./components/Footer";
 
 interface VideoData {
-  videoPath: string;
-  audioPath: string;
+  videoUrl: string;
+  audioUrl: string;
   title: string;
   thumbnail: string;
   duration: string;
@@ -34,17 +33,15 @@ interface JobResponse {
   author?: string;
   videoPath?: string;
   audioPath?: string;
-  transcript?: string;
   errorMsg?: string;
 }
 
-type Stage = "idle" | "downloading" | "transcribing" | "done";
+type Stage = "idle" | "downloading" | "done";
 
 export default function Home() {
   const { data: session, status: authStatus } = useSession();
   const [stage, setStage] = useState<Stage>("idle");
   const [videoData, setVideoData] = useState<VideoData | null>(null);
-  const [transcript, setTranscript] = useState("");
   const [error, setError] = useState("");
   const [usage, setUsage] = useState<{ used: number; limit: number; remaining: number } | null>(null);
 
@@ -102,7 +99,6 @@ export default function Home() {
 
     setError("");
     setVideoData(null);
-    setTranscript("");
     setStage("downloading");
 
     try {
@@ -118,23 +114,17 @@ export default function Home() {
         throw new Error(jobData.error || "Failed to start download");
       }
 
-      setStage("transcribing");
-
       // Poll for completion
       const result = await pollJobStatus(jobData.jobId);
 
       setVideoData({
-        videoPath: result.videoPath || "",
-        audioPath: result.audioPath || "",
+        videoUrl: result.videoPath || "",
+        audioUrl: result.audioPath || "",
         title: result.title || jobData.title || "",
         thumbnail: result.thumbnail || jobData.thumbnail || "",
         duration: result.duration || jobData.duration || "",
         author: result.author || jobData.author || "",
       });
-
-      if (result.transcript) {
-        setTranscript(result.transcript);
-      }
 
       setStage("done");
 
@@ -152,7 +142,6 @@ export default function Home() {
   };
 
   const loading = stage === "downloading";
-  const transcribing = stage === "transcribing";
   const isAuthenticated = authStatus === "authenticated";
 
   return (
@@ -235,21 +224,18 @@ export default function Home() {
 
           <UrlForm
             onSubmit={handleSubmit}
-            loading={loading || transcribing}
+            loading={loading}
             disabled={!isAuthenticated || (usage !== null && usage.remaining <= 0)}
           />
 
           {error && <ErrorMessage message={error} onDismiss={() => setError("")} />}
 
-          {(loading || transcribing) && (
-            <LoadingOverlay stage={loading ? "downloading" : "transcribing"} />
+          {loading && (
+            <LoadingOverlay stage="downloading" />
           )}
 
           {videoData && stage === "done" && (
-            <>
-              <DownloadButtons data={videoData} transcript={transcript} transcribing={false} />
-              <TranscriptCard transcript={transcript} loading={false} />
-            </>
+            <DownloadButtons data={videoData} />
           )}
         </DemoSection>
 

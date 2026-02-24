@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 interface LoadingOverlayProps {
-  stage: "downloading" | "transcribing";
+  stage: "downloading";
 }
 
 export default function LoadingOverlay({ stage }: LoadingOverlayProps) {
@@ -24,8 +24,7 @@ export default function LoadingOverlay({ stage }: LoadingOverlayProps) {
   }, []);
 
   const stages = [
-    { key: "downloading", label: "Downloading video & audio", sub: "Fetching via ytdl-core..." },
-    { key: "transcribing", label: "Generating AI transcript", sub: "Processing with Whisper..." },
+    { key: "downloading", label: "Processing your video", sub: "Fetching download links..." },
   ];
 
   return (
@@ -37,18 +36,17 @@ export default function LoadingOverlay({ stage }: LoadingOverlayProps) {
         <div className="space-y-4 mb-6">
           {stages.map((s) => {
             const isActive = s.key === stage;
-            const isDone = stage === "transcribing" && s.key === "downloading";
 
             return (
               <div key={s.key} className="flex items-center gap-4">
                 {/* Status indicator */}
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500"
                   style={{
-                    background: isDone ? "rgba(0,255,157,0.12)" : isActive ? "rgba(0,229,255,0.12)" : "rgba(0,0,0,0.3)",
-                    border: `1px solid ${isDone ? "rgba(0,255,157,0.3)" : isActive ? "rgba(0,229,255,0.3)" : "var(--border)"}`,
-                    color: isDone ? "var(--emerald)" : isActive ? "var(--cyan)" : "var(--muted)",
+                    background: isActive ? "rgba(0,229,255,0.12)" : "rgba(0,0,0,0.3)",
+                    border: `1px solid ${isActive ? "rgba(0,229,255,0.3)" : "var(--border)"}`,
+                    color: isActive ? "var(--cyan)" : "var(--muted)",
                   }}>
-                  {isDone ? "✓" : isActive ? (
+                  {isActive ? (
                     <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -60,7 +58,7 @@ export default function LoadingOverlay({ stage }: LoadingOverlayProps) {
 
                 <div>
                   <div className="font-display font-semibold text-sm transition-colors duration-300"
-                    style={{ color: isDone ? "var(--emerald)" : isActive ? "var(--text-bright)" : "var(--muted)" }}>
+                    style={{ color: isActive ? "var(--text-bright)" : "var(--muted)" }}>
                     {s.label}
                   </div>
                   {isActive && (
@@ -81,7 +79,7 @@ export default function LoadingOverlay({ stage }: LoadingOverlayProps) {
         </div>
 
         <p className="font-mono text-xs mt-3 text-center" style={{ color: "var(--muted)" }}>
-          {stage === "downloading" ? "Video length affects processing time..." : "AI transcription in progress..."}
+          Processing time depends on video length...
         </p>
       </div>
     </div>
